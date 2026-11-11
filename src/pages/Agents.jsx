@@ -7,7 +7,7 @@ import { NumberedSteps, UseCase } from '../components/usecase';
 
 const STEPS = [
   { id: 'start', n: 1, title: 'Write it', body: 'Start from the Universal Starter or a ready-made role agent.' },
-  { id: 'install', n: 2, title: 'Install it', body: 'Paste it into ChatGPT, Claude, Copilot, or Gemini.' },
+  { id: 'install', n: 2, title: 'Install it', body: 'Paste it into UnifiedAI or the AI tool your team uses.' },
   { id: 'test', n: 3, title: 'Test it', body: 'Run the three-phase test before real work.' },
   { id: 'improve', n: 4, title: 'Improve it', body: 'Patch the gaps, add files, and share it.' },
 ];

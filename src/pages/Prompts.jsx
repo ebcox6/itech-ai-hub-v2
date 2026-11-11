@@ -9,7 +9,7 @@ import { NumberedSteps, UseCase } from '../components/usecase';
 const WALKTHROUGH = [
   { title: 'Pick a prompt', body: 'Maya needs to chase a vendor who missed a deadline, so she opens Professional Email.' },
   { title: 'Fill in four details', body: 'The situation, who it is going to, what she needs, and the tone. "Fill with example" shows what good answers look like.' },
-  { title: 'Send it to her AI tool', body: 'One click opens ChatGPT or Claude with the prompt ready, or copies it for Gemini and Copilot.' },
+  { title: 'Copy it into UnifiedAI', body: 'One click copies the finished prompt. She pastes it into UnifiedAI and gets a draft in seconds.' },
   { title: 'Check before sending', body: 'She follows up with the Self-Check prompt, which catches a date she forgot to confirm.' },
 ];
 
@@ -31,7 +31,7 @@ export default function Prompts() {
   return (
     <>
       <PageHeader eyebrow="Prompts" title="Ready-made prompts for everyday work">
-        A short, focused set that works in any role or industry. Open one, fill in your details, and send it to ChatGPT, Claude, Gemini, or Copilot.
+        A short, focused set that works in any role or industry. Open one, fill in your details, and copy it straight into UnifiedAI.
       </PageHeader>
 
       <div className="container-page space-y-12 py-8">

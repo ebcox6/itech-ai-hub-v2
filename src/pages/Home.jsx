@@ -26,7 +26,7 @@ const PATHS = [
     icon: Library,
     step: 'Step 2',
     title: 'Use a proven prompt',
-    body: 'Fill-in-the-blank prompts for everyday work. Type your details, preview, and send to your AI tool in one click.',
+    body: 'Fill-in-the-blank prompts for everyday work. Type your details, preview, and copy into UnifiedAI in one click.',
     cta: 'Browse prompts',
   },
   {
@@ -171,10 +171,7 @@ function HeroPreview() {
         <span className="rounded bg-blue-soft px-1 text-blue">[tone]</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        <span className="btn-primary px-3 py-2 text-xs">Copy prompt</span>
-        {['ChatGPT', 'Claude', 'Copilot'].map((t) => (
-          <span key={t} className="rounded-xl border border-line px-3 py-2 font-heading text-xs font-medium text-navy">{t}</span>
-        ))}
+        <span className="btn-primary px-3 py-2 text-xs">Copy prompt into UnifiedAI</span>
       </div>
     </motion.div>
   );

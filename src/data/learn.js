@@ -236,7 +236,7 @@ FORMAT: Organize the prompt using "C.R.A.F.T.", where each letter is a section:
 - Format: The structure of the output: essay, table, list, and so on.
 - Target Audience: Who will use the output, including their background, reading level, and preferences.
 
-TARGET AUDIENCE: The prompt will be used with a modern AI assistant such as ChatGPT, Claude, Gemini, or Copilot.`;
+TARGET AUDIENCE: The prompt will be used with a modern AI assistant such as UnifiedAI, ChatGPT, Claude, Gemini, or Copilot.`;
 
 export const selfCheckPrompt = `Review what you just produced. Identify:
 

@@ -26,7 +26,7 @@ All content lives in plain data files, so most updates need no component changes
 
 | File | Holds |
 | --- | --- |
-| `src/config/site.js` | Org name, intro copy, contact email, and the "Updated" date printed on the guides |
+| `src/config/site.js` | Org name, intro copy, contact email, the "Updated" date on the guides, and `primaryAI` (the default tool every prompt is copied into, currently UnifiedAI) |
 | `src/data/learn.js` | The five lessons, their use cases, and the fill-in block printed on each infographic |
 | `src/data/prompts.js` | Every prompt. Fields use `{key}` placeholders, and `example.values` powers "Fill with example" |
 | `src/data/agents.js` | Agent Builder, starter agents, install steps, and the agent test |

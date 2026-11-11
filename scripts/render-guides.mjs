@@ -96,7 +96,7 @@ function page(f, index) {
   </div>
   <div class="foot">
     <img src="${logo}" alt="">
-    <span class="tools">Works with ChatGPT · Claude · Gemini · Copilot</span>
+    <span class="tools">Built for UnifiedAI · Works with ChatGPT, Claude, Gemini, Copilot</span>
     <span>${esc(site.orgName)} ${esc(site.hubName)} · Updated ${esc(site.guidesUpdated)}</span>
   </div>
 </body></html>`;
