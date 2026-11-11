@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* i-Tech brand tokens. Navy for structure, orange for emphasis, Dodger Blue for interaction. */
+@theme {
+  --color-navy: #001e62;
+  --color-navy-deep: #001237;
+  --color-navy-soft: #e8edf7;
+  --color-orange: #ef7225;
+  --color-orange-soft: #fdf0e7;
+  --color-blue: #006cff;
+  --color-blue-soft: #e6f0ff;
+  --color-ink: #0f172a;
+  --color-muted: #595959;
+  --color-line: #d9d9d9;
+  --color-surface: #f5f7fb;
+
+  --font-heading: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
+  body {
+    @apply bg-surface font-body text-ink antialiased;
+  }
+  h1, h2, h3, h4 { @apply font-heading text-navy; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--color-blue); outline-offset: 2px; border-radius: 6px; }
+  ::selection { background: #ffd9c2; }
+}
+
+/* Reusable component classes. Tailwind v4 needs @utility (not @layer) for classes used with @apply. */
+@utility container-page { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+@utility eyebrow { @apply font-heading text-xs font-semibold tracking-[0.14em] text-orange uppercase; }
+@utility card { @apply rounded-2xl border border-line/70 bg-white; }
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-heading text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary { @apply btn bg-orange text-white hover:bg-[#d9621a]; }
+@utility btn-navy { @apply btn bg-navy text-white hover:bg-navy-deep; }
+@utility btn-ghost { @apply btn border border-line bg-white text-navy hover:border-navy/40 hover:bg-navy-soft/50; }
+@utility chip { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap; }
+@utility prose-prompt { @apply font-mono text-[13px] leading-relaxed whitespace-pre-wrap break-words; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
