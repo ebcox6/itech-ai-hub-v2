@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { agents } from '../data/agents';
 import PromptBuilder from '../components/PromptBuilder';
 import { AgentTest, PlatformTabs, ScoreTable } from '../components/agentParts';
-import { AudienceChips, BackLink, FavoriteButton, PageHeader, SectionTitle } from '../components/ui';
+import { BackLink, FavoriteButton, PageHeader, SectionTitle } from '../components/ui';
 import NotFound from './NotFound';
 
 export default function AgentDetail() {
@@ -13,21 +13,20 @@ export default function AgentDetail() {
   return (
     <>
       <PageHeader
-        eyebrow={a.role}
+        eyebrow={a.focus}
         title={a.title}
         back={<BackLink to="/agents">Build your agent</BackLink>}
         actions={<FavoriteButton id={`agent:${a.id}`} label={a.title} className="h-11 w-11 border border-line" />}
       >
         <p>{a.summary}</p>
-        <div className="mt-4 flex gap-1.5 text-xs"><AudienceChips keys={a.audiences} /></div>
       </PageHeader>
 
       <div className="container-page space-y-14 py-10">
         <section>
-          <SectionTitle eyebrow="Step 1" title="Copy the instructions">
-            Adjust any detail that does not match your team, then paste it into your AI tool’s instructions field.
+          <SectionTitle eyebrow="Step 1" title="Make it yours">
+            Add your job title and organization, adjust anything else that does not fit, then copy it into your AI tool’s instructions field.
           </SectionTitle>
-          <PromptBuilder key={a.id} id={`agent:${a.id}`} kind="agent" title={a.title} template={a.systemPrompt} />
+          <PromptBuilder key={a.id} id={`agent:${a.id}`} kind="agent" title={a.title} template={a.systemPrompt} fields={a.fields} />
         </section>
         <section>
           <SectionTitle eyebrow="Step 2" title="Install it" />

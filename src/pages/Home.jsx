@@ -1,20 +1,16 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, BookOpen, Bot, Check, Library, Sparkles } from 'lucide-react';
-import { audiences, site } from '../config/site';
+import { ArrowRight, BookOpen, Bot, Library, Sparkles } from 'lucide-react';
+import { site } from '../config/site';
 import { frameworks } from '../data/learn';
 import { prompts } from '../data/prompts';
 import { agents } from '../data/agents';
-import { useStore } from '../lib/store';
 import { PromptCard } from '../components/cards';
 import { SectionTitle } from '../components/ui';
+import { BeforeAfter, UseCase, WhyItWorks } from '../components/usecase';
 
-const FEATURED = {
-  msp: ['msp-escalation-summary', 'msp-qbr-agenda', 'msp-difficult-client-email'],
-  erp: ['erp-weekly-status-report', 'erp-discovery-questions', 'erp-golive-readiness'],
-  business: ['corp-meeting-agenda', 'corp-meeting-recap', 'corp-policy-announcement'],
-  all: ['uc-general', 'adv-selfcheck', 'msp-qbr-agenda'],
-};
+const FEATURED = ['professional-email', 'meeting-recap', 'self-check'];
+const craft = frameworks.find((f) => f.slug === 'craft');
 
 const PATHS = [
   {
@@ -22,7 +18,7 @@ const PATHS = [
     icon: BookOpen,
     step: 'Step 1',
     title: 'Learn the frameworks',
-    body: 'Five short lessons, about 20 minutes in total. Start with the anatomy of a prompt and finish with the power moves.',
+    body: 'Five short lessons, about 20 minutes in total, each with a real use case and a printable guide.',
     cta: 'Start learning',
   },
   {
@@ -30,7 +26,7 @@ const PATHS = [
     icon: Library,
     step: 'Step 2',
     title: 'Use a proven prompt',
-    body: `${prompts.length} fill-in-the-blank prompts. Type your details, preview, and send to your AI tool in one click.`,
+    body: 'Fill-in-the-blank prompts for everyday work. Type your details, preview, and send to your AI tool in one click.',
     cta: 'Browse prompts',
   },
   {
@@ -38,7 +34,7 @@ const PATHS = [
     icon: Bot,
     step: 'Step 3',
     title: 'Build your own agent',
-    body: 'Turn what you learned into an assistant that already knows your role. Install it, then test it before you trust it.',
+    body: 'Turn what you learned into an assistant that already knows your job. Install it, then test it before you trust it.',
     cta: 'Build an agent',
   },
 ];
@@ -46,9 +42,7 @@ const PATHS = [
 const fade = (d = 0) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4, delay: d } });
 
 export default function Home() {
-  const { audience, setAudience } = useStore();
-  const featured = (FEATURED[audience] || FEATURED.all).map((id) => prompts.find((p) => p.id === id)).filter(Boolean);
-  const current = audiences.find((a) => a.key === audience);
+  const featured = FEATURED.map((id) => prompts.find((p) => p.id === id)).filter(Boolean);
 
   return (
     <>
@@ -58,70 +52,56 @@ export default function Home() {
         <div aria-hidden className="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(#fff_1px,transparent_1px)] [background-size:22px_22px]" />
         <div className="container-page relative grid items-center gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1fr)_25rem]">
           <div>
-          <motion.p {...fade()} className="eyebrow mb-4 flex items-center gap-2">
-            <Sparkles size={14} aria-hidden /> {site.orgName}
-          </motion.p>
-          <motion.h1 {...fade(0.05)} className="max-w-3xl text-4xl leading-[1.1] font-bold text-white sm:text-5xl">
-            Better prompts. <span className="text-orange">Smarter agents.</span> Less blank-page time.
-          </motion.h1>
-          <motion.p {...fade(0.1)} className="mt-5 max-w-2xl text-lg leading-relaxed text-white/75">
-            {site.intro}
-          </motion.p>
-          <motion.div {...fade(0.15)} className="mt-8 flex flex-wrap gap-3">
-            <Link to="/learn" className="btn-primary px-5 py-3 text-base">
-              I’m new to prompting <ArrowRight size={18} aria-hidden />
-            </Link>
-            <Link to="/agents" className="btn border border-white/25 px-5 py-3 text-base text-white hover:bg-white/10">
-              I’m ready to build an agent
-            </Link>
-          </motion.div>
-          <motion.dl {...fade(0.2)} className="mt-12 grid max-w-xl grid-cols-3 gap-4 border-t border-white/15 pt-6">
-            {[
-              [frameworks.length, 'Frameworks'],
-              [prompts.length, 'Prompts'],
-              [agents.length, 'Role agents'],
-            ].map(([n, l]) => (
-              <div key={l}>
-                <dt className="sr-only">{l}</dt>
-                <dd className="font-heading text-3xl font-bold text-white">{n}</dd>
-                <dd className="text-sm text-white/60">{l}</dd>
-              </div>
-            ))}
-          </motion.dl>
+            <motion.p {...fade()} className="eyebrow mb-4 flex items-center gap-2">
+              <Sparkles size={14} aria-hidden /> {site.orgName}
+            </motion.p>
+            <motion.h1 {...fade(0.05)} className="max-w-3xl text-4xl leading-[1.1] font-bold text-white sm:text-5xl">
+              Better prompts. <span className="text-orange">Smarter agents.</span> Less blank-page time.
+            </motion.h1>
+            <motion.p {...fade(0.1)} className="mt-5 max-w-2xl text-lg leading-relaxed text-white/75">
+              {site.intro}
+            </motion.p>
+            <motion.div {...fade(0.15)} className="mt-8 flex flex-wrap gap-3">
+              <Link to="/learn" className="btn-primary px-5 py-3 text-base">
+                I’m new to prompting <ArrowRight size={18} aria-hidden />
+              </Link>
+              <Link to="/agents" className="btn border border-white/25 px-5 py-3 text-base text-white hover:bg-white/10">
+                I’m ready to build an agent
+              </Link>
+            </motion.div>
+            <motion.dl {...fade(0.2)} className="mt-12 grid max-w-xl grid-cols-3 gap-4 border-t border-white/15 pt-6">
+              {[
+                [frameworks.length, 'Frameworks'],
+                [prompts.length, 'Ready-made prompts'],
+                [agents.length, 'Starter agents'],
+              ].map(([n, l]) => (
+                <div key={l}>
+                  <dt className="sr-only">{l}</dt>
+                  <dd className="font-heading text-3xl font-bold text-white">{n}</dd>
+                  <dd className="text-sm text-white/60">{l}</dd>
+                </div>
+              ))}
+            </motion.dl>
           </div>
           <HeroPreview />
         </div>
       </section>
 
-      {/* Team picker */}
+      {/* Use case */}
       <section className="container-page py-12 sm:py-16">
-        <SectionTitle eyebrow="Make it yours" title="Which team are you on?">
-          Pick one and the hub shows the prompts and agents built for your work. Change it anytime from the menu at the top.
+        <SectionTitle eyebrow="See the difference" title="Same request, very different result">
+          Here is what one framework does to an everyday request. Every lesson in the hub walks through an example like this.
         </SectionTitle>
-        <div className="grid gap-4 md:grid-cols-3" role="radiogroup" aria-label="Your team">
-          {audiences.map((a) => {
-            const on = audience === a.key;
-            const count = prompts.filter((p) => p.audiences.includes(a.key)).length;
-            return (
-              <button
-                key={a.key}
-                type="button"
-                role="radio"
-                aria-checked={on}
-                onClick={() => setAudience(on ? null : a.key)}
-                className={`card relative p-5 text-left transition ${
-                  on ? 'border-orange shadow-[0_0_0_3px_rgba(239,114,37,0.18)]' : 'hover:border-navy/30'
-                }`}
-              >
-                <span className={`absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full border ${on ? 'border-orange bg-orange text-white' : 'border-line'}`}>
-                  {on && <Check size={14} aria-hidden />}
-                </span>
-                <p className="pr-8 font-heading text-lg font-semibold text-navy">{a.label}</p>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">{a.description}</p>
-                <p className="mt-4 text-xs font-semibold text-orange">{count} prompts</p>
-              </button>
-            );
-          })}
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <UseCase id="home-use-case" title={craft.example.title} scenario={craft.example.scenario}>
+            <BeforeAfter before={craft.example.before} after={craft.example.after} />
+          </UseCase>
+          <div className="card space-y-5 p-6 lg:sticky lg:top-24">
+            <WhyItWorks items={craft.example.why} />
+            <Link to="/learn/craft" className="btn-navy w-full">
+              Learn C.R.A.F.T. <ArrowRight size={16} aria-hidden />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -152,8 +132,8 @@ export default function Home() {
       {/* Featured */}
       <section className="container-page py-12 sm:py-16">
         <SectionTitle
-          eyebrow={current ? `Popular with ${current.short} teams` : 'Popular right now'}
-          title="Try one of these first"
+          eyebrow="Start here"
+          title="Three prompts worth using this week"
           action={
             <Link to="/prompts" className="inline-flex items-center gap-1.5 font-heading text-sm font-semibold text-blue hover:underline">
               See all prompts <ArrowRight size={16} aria-hidden />
@@ -170,6 +150,7 @@ export default function Home() {
 
 // Decorative sample of the prompt builder, so first-time visitors see what the hub does.
 function HeroPreview() {
+  const mark = 'rounded bg-orange-soft px-0.5 text-ink';
   return (
     <motion.div
       aria-hidden
@@ -179,17 +160,15 @@ function HeroPreview() {
       className="hidden rotate-1 rounded-2xl bg-white p-5 text-ink shadow-2xl ring-1 ring-white/10 lg:block"
     >
       <div className="mb-4 flex items-center justify-between">
-        <span className="chip bg-orange-soft text-[#b4541a]">Client Communication</span>
+        <span className="chip bg-orange-soft text-[#b4541a]">Writing</span>
         <span className="chip bg-surface text-muted">3/4 filled</span>
       </div>
-      <p className="font-heading font-semibold text-navy">QBR Agenda & Talking Points</p>
+      <p className="font-heading font-semibold text-navy">Professional Email</p>
       <div className="prose-prompt mt-3 rounded-xl bg-surface p-3 text-[12px] text-muted">
-        CONTEXT: I am preparing for a Quarterly Business Review with{' '}
-        <mark className="rounded bg-orange-soft px-0.5 text-ink">Acme Dental</mark>. They are a{' '}
-        <mark className="rounded bg-orange-soft px-0.5 text-ink">12-location healthcare</mark> client who has been with us for{' '}
-        <mark className="rounded bg-orange-soft px-0.5 text-ink">3 years</mark>. Key topics I need to cover:{' '}
-        <span className="rounded bg-blue-soft px-1 text-blue">[key topics]</span>
-        {'\n\n'}ROLE: Act as a senior vCIO and client success strategist...
+        CONTEXT: <mark className={mark}>Our print vendor has missed two delivery dates</mark>.{'\n\n'}ACTION: Write an email to{' '}
+        <mark className={mark}>our account manager</mark>. The goal is:{' '}
+        <mark className={mark}>a confirmed date by Thursday</mark>.{'\n\n'}FORMAT: Under 175 words. Tone:{' '}
+        <span className="rounded bg-blue-soft px-1 text-blue">[tone]</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <span className="btn-primary px-3 py-2 text-xs">Copy prompt</span>

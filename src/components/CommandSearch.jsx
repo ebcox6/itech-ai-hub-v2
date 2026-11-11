@@ -5,7 +5,7 @@ import { BookOpen, Bot, CornerDownLeft, Library, Search, X } from 'lucide-react'
 import { search } from '../lib/search';
 
 const KIND_ICON = { Learn: BookOpen, Prompt: Library, Agent: Bot };
-const SUGGESTIONS = ['QBR', 'status report', 'escalation', 'meeting', 'C.R.A.F.T.', 'self-check'];
+const SUGGESTIONS = ['email', 'meeting', 'summarize', 'C.R.A.F.T.', 'self-check', 'agent'];
 
 export default function CommandSearch({ open, onClose: close }) {
   const [q, setQ] = useState('');

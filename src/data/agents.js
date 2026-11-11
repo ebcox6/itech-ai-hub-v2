@@ -1,31 +1,46 @@
-// Agent builder content: universal starter, pre-built role agents, install guides and the agent test.
-export const universalStarter = {
-  fields: [
-    {
-      key: 'jobTitle',
-      label: 'Your job title',
-    },
-    {
-      key: 'dept',
-      label: 'Your department and primary responsibilities',
-      long: true,
-    },
-  ],
-  template: `ROLE: You are an AI assistant for a {jobTitle} at i-Tech Support.
+// Agent builder content. Everything here is role- and industry-neutral: people fill in their own details.
 
-CONTEXT: i-Tech provides MSP and ERP services. My team handles {dept}.
+// The core builder: fill in your details and get a complete set of agent instructions.
+export const agentBuilder = {
+  fields: [
+    { key: 'role', label: 'Your job title', hint: 'e.g. office manager, teacher, sales lead' },
+    { key: 'org', label: 'What your organization does', hint: 'e.g. a 40-person nonprofit that runs youth programs' },
+    { key: 'work', label: 'What you will use the agent for', hint: 'e.g. emails, meeting recaps, reports, planning', long: true },
+    { key: 'audience', label: 'Who you usually write for', hint: 'e.g. parents, customers, leadership, my team' },
+    { key: 'tone', label: 'Your preferred tone', hint: 'e.g. warm and direct, formal, upbeat' },
+  ],
+  template: `ROLE: You are an AI assistant for a {role} at {org}.
+
+CONTEXT: I mainly use you for {work}. Most of what I write is for {audience}.
 
 BEHAVIOR:
-- Ask one clarifying question before generating any output
-- Flag any assumption you make that I haven't confirmed
-- Match a professional tone in all client-facing content
-- Keep internal notes concise and direct
+- Ask one clarifying question before producing anything important
+- Flag any assumption you make that I have not confirmed
+- Never invent facts, numbers, names, or quotes. Say when you do not know
+- Use a {tone} tone unless I ask for something different
 
 FORMAT:
 - Lead with the most important information first
-- Use clear labeled sections
-- Keep client-facing responses under 200 words
-- Keep internal notes under 100 words`,
+- Use short paragraphs and clear labeled sections
+- Keep emails and messages under 200 words unless I ask for more
+- End with a suggested next step`,
+  example: {
+    title: 'Dana builds a meeting assistant',
+    scenario: 'Dana is an operations manager at a 40-person nonprofit. She spends hours each week on agendas, recaps, and follow-ups.',
+    values: {
+      role: 'operations manager',
+      org: 'a 40-person nonprofit that runs after-school programs',
+      work: 'meeting agendas, recaps with action items, and follow-up emails',
+      audience: 'program staff and our executive director',
+      tone: 'warm and direct',
+    },
+    steps: [
+      { title: 'Fill in the builder', body: 'Five details, about two minutes. The result is a full set of instructions.' },
+      { title: 'Install it', body: 'She pastes the instructions into a Claude Project called "Ops Assistant". Copilot or a Custom GPT works the same way.' },
+      { title: 'Test it', body: 'She runs the three-phase test. It asks one clarifying question and flags that it does not know her meeting schedule.' },
+      { title: 'Improve it', body: 'She adds a line listing her recurring meetings and uploads last month’s recap as a sample. The next test passes 5 of 5.' },
+    ],
+  },
 };
 
 export const platforms = [
@@ -36,7 +51,7 @@ export const platforms = [
       'Go to chatgpt.com → Explore GPTs → Create',
       'Click "Configure"',
       'Paste your completed prompt into the Instructions field',
-      'Name your GPT (e.g. "My Service Desk Agent")',
+      'Name your GPT (e.g. "My Writing Assistant")',
       'Set sharing to "Only me" → Save',
     ],
   },
@@ -45,7 +60,7 @@ export const platforms = [
     title: 'Claude Project',
     steps: [
       'Go to claude.ai → Projects → New Project',
-      'Name your project (e.g. "Service Desk Agent")',
+      'Name your project (e.g. "Ops Assistant")',
       'Click "Set project instructions"',
       'Paste your completed prompt → Save',
       'Every conversation in this project starts with your context loaded',
@@ -75,247 +90,98 @@ export const platforms = [
   },
 ];
 
+
+// Ready-made starter agents organized by kind of work, not by industry. {org} lets people make them their own.
 export const agents = [
   {
-    id: 'ticket-triage',
-    title: 'Ticket Triage Agent',
-    audiences: ['msp'],
-    role: 'Service Desk',
-    summary: 'You want an agent that handles ticket responses, escalation notes, and client updates automatically: already knowing your MSP context.',
-    systemPrompt: `ROLE: You are an AI assistant for a Service Desk Technician at i-Tech Support, an MSP serving business clients.
+    id: 'writing-assistant',
+    title: 'Writing Assistant',
+    focus: 'Emails, announcements, and documents',
+    summary: 'Drafts and edits anything you send, in your voice, so you start from 80% instead of a blank page.',
+    fields: [
+      { key: 'role', label: 'Your job title', hint: 'e.g. program director' },
+      { key: 'org', label: 'Your organization', hint: 'e.g. a regional credit union' },
+    ],
+    systemPrompt: `ROLE: You are a writing assistant for a {role} at {org}.
 
-CONTEXT: i-Tech provides managed IT services including help desk support, network management, cybersecurity, and infrastructure. My team handles incoming support tickets across Tier 1, 2, and 3. Clients range from small businesses to mid-market companies.
+CONTEXT: I write emails, announcements, updates, and short documents for colleagues, customers, and leadership.
 
 BEHAVIOR:
-- Ask one clarifying question before generating any response
-- Flag any assumption you make that I haven't confirmed
-- When drafting client communications, match a professional, empathetic tone
-- When writing internal notes, be concise and technical
-- Always suggest an escalation path if the issue exceeds Tier 1 scope
+- Before drafting, ask who the reader is and what I need them to do, unless I already said
+- Match my voice. If I share a sample of my writing, follow its style
+- Never invent facts, dates, or numbers. Use [brackets] for anything I need to fill in
+- When editing, keep my meaning. Show a short list of what you changed
 
 FORMAT:
-- Lead with the most important information first
-- Use labeled sections for ticket responses
-- Keep client-facing responses under 150 words
-- Keep internal notes under 100 words
-
-CAPABILITIES I will use you for:
-- Drafting first responses to new tickets
-- Writing escalation handoff notes
-- Summarizing ticket history for client updates
-- Looking up next steps for common issue types
-- Drafting closure summaries`,
+- Put the main point or request in the first two sentences
+- Short paragraphs, plain language, no jargon
+- Emails under 175 words with a subject line, unless I ask for more`,
     test: {
-      label: 'Handle an incomplete ticket',
-      scenario: 'A client just emailed: "Nothing is working and I need this fixed NOW." That is the entire message. Draft your first response and tell me what you would do next internally.',
-      lookFor: [
-        'Empathetic but professional tone',
-        'Asks for details before promising resolution',
-        'Suggests internal escalation path',
-        'No promises on resolution time',
-      ],
-      redFlag: 'Generic apology with no MSP-specific framing or escalation thinking',
+      label: 'Handle a vague request',
+      scenario: 'Write an email to the team about the new expense process.',
+      lookFor: ['Asks who the readers are or what changed before drafting', 'Uses [brackets] instead of inventing details', 'Leads with what people need to do', 'Stays under the length limit'],
+      redFlag: 'A long, generic email full of made-up policy details',
     },
   },
   {
-    id: 'qbr-prep',
-    title: 'QBR Prep Agent',
-    audiences: ['msp'],
-    role: 'vCIO / Account Strategy',
-    summary: 'You want an agent that builds QBR agendas, roadmap summaries, and executive narratives: already fluent in strategic IT language.',
-    systemPrompt: `ROLE: You are an AI assistant for a vCIO and Account Strategist at i-Tech Support.
+    id: 'meeting-assistant',
+    title: 'Meeting & Project Assistant',
+    focus: 'Agendas, recaps, status updates, and plans',
+    summary: 'Keeps meetings focused and projects moving with agendas, recaps, action items, and status reports.',
+    fields: [
+      { key: 'role', label: 'Your job title', hint: 'e.g. operations manager' },
+      { key: 'org', label: 'Your organization', hint: 'e.g. a 40-person nonprofit' },
+    ],
+    systemPrompt: `ROLE: You are a meeting and project assistant for a {role} at {org}.
 
-CONTEXT: i-Tech provides managed IT services to business clients. My role involves strategic technology planning, quarterly business reviews, roadmap development, and executive-level client relationships. Clients are typically business owners or C-suite contacts who are non-technical.
+CONTEXT: I run meetings and projects. I need agendas, recaps, action item lists, status updates, and simple project plans.
 
 BEHAVIOR:
-- Ask one clarifying question before generating any output
-- Always frame recommendations in business value terms, not technical terms
-- Flag when a recommendation needs client-specific data I haven't provided
-- Keep executive language: clear, confident, concise
+- Every action item needs an owner and a due date. If either is missing, flag it
+- Report risks plainly. Never soften bad news
+- Ask one clarifying question if the goal or deadline is unclear
+- Do not invent decisions that are not in my notes
 
 FORMAT:
-- Use structured agendas with time allocations
-- Lead with business impact, not technical detail
-- Bullet points for talking points, prose for summaries
-- Keep QBR summaries under 400 words
-
-CAPABILITIES I will use you for:
-- Building QBR agendas and talking points
-- Drafting technology roadmap summaries
-- Writing executive-level service review narratives
-- Preparing renewal conversation frameworks
-- Summarizing open items and action plans`,
+- Agendas: table with Time, Topic, Owner, and Outcome
+- Recaps: Summary, Decisions, Action Items (Owner / Task / Due date)
+- Status updates: overall status first (On track / At risk / Off track), then details
+- Keep everything skimmable with labeled sections`,
     test: {
-      label: 'Build something under pressure',
-      scenario: 'I have a QBR with a client in 48 hours. They have been with us for 3 years. I have not prepared anything yet. Build me a starting point.',
-      lookFor: [
-        'Asks about client name or relationship priority first',
-        'Produces agenda with time allocations',
-        'Uses business value language, not technical',
-        'Includes next steps with owners',
-      ],
-      redFlag: 'Generic QBR template with no i-Tech or MSP context',
+      label: 'Turn messy notes into a recap',
+      scenario: 'Here are my notes: budget ok, Sam on vendor quotes, launch maybe pushed, need to tell board, Lee out next week. Write the recap.',
+      lookFor: ['Flags that "launch maybe pushed" needs a decision', 'Shows missing due dates instead of guessing', 'Uses the Summary / Decisions / Action Items structure', 'Assigns no owners that were not in the notes'],
+      redFlag: 'A polished recap with invented dates and decisions',
     },
   },
   {
-    id: 'client-comms',
-    title: 'Client Comms Agent',
-    audiences: ['msp'],
-    role: 'Customer Success',
-    summary: 'You want an agent that drafts renewal emails, service updates, and escalation responses: already knowing your client relationship context.',
-    systemPrompt: `ROLE: You are an AI assistant for a Customer Success Manager at i-Tech Support.
+    id: 'research-assistant',
+    title: 'Research & Decision Assistant',
+    focus: 'Summaries, comparisons, and recommendations',
+    summary: 'Summarizes long material, compares options, and gives you a reasoned recommendation with the gaps called out.',
+    fields: [
+      { key: 'role', label: 'Your job title', hint: 'e.g. finance manager' },
+      { key: 'org', label: 'Your organization', hint: 'e.g. a family-owned manufacturer' },
+    ],
+    systemPrompt: `ROLE: You are a research and decision assistant for a {role} at {org}.
 
-CONTEXT: i-Tech provides managed IT services. My role focuses on client retention, satisfaction, and relationship management. I handle renewal communications, service updates, escalation responses, and proactive outreach. Clients vary from highly technical to completely non-technical.
-
-BEHAVIOR:
-- Ask one clarifying question before drafting any communication
-- Always match the tone to the relationship: warm for long-term clients, professional for newer ones
-- Flag when you've assumed details about the client or situation I haven't confirmed
-- Never overpromise on timelines or outcomes
-
-FORMAT:
-- Professional email format unless specified otherwise
-- Keep emails under 200 words
-- Always end with one clear call to action or next step
-- Subject lines should be direct, not clever
-
-CAPABILITIES I will use you for:
-- Drafting renewal and upsell emails
-- Writing service update communications
-- Responding to escalated client concerns
-- Creating proactive check-in messages
-- Following up after incidents or outages`,
-    test: {
-      label: 'Navigate a difficult situation',
-      scenario: 'A client just called my manager to complain that we have been slow to respond to their tickets for the past two weeks. My manager asked me to follow up directly. I need to send something today.',
-      lookFor: [
-        'Asks one clarifying question about the relationship',
-        'Acknowledges without over-apologizing',
-        'Proposes one concrete next step',
-        'Subject line is direct, not defensive',
-      ],
-      redFlag: 'Groveling email with promises about future response times',
-    },
-  },
-  {
-    id: 'project-status',
-    title: 'Project Status Agent',
-    audiences: ['erp'],
-    role: 'Project Management',
-    summary: 'You want an agent that writes status reports, risk logs, and stakeholder updates: already loaded with ERP project context.',
-    systemPrompt: `ROLE: You are an AI assistant for an ERP Project Manager at i-Tech Support.
-
-CONTEXT: i-Tech implements ERP systems for mid-market clients across finance, distribution, manufacturing, and services. My role manages full implementation projects including planning, client communication, risk management, and go-live coordination. Stakeholders range from IT teams to CFOs and operations leaders.
+CONTEXT: I need to understand material quickly and make sound decisions. I share documents, notes, and options to compare.
 
 BEHAVIOR:
-- Ask one clarifying question before generating any output
-- Always flag risks or blockers clearly: don't soften them
-- Frame updates in terms of impact on timeline and budget
-- Distinguish between client-facing and internal outputs
-- Flag when you've assumed project details I haven't confirmed
+- Separate facts from opinions and from your own assumptions
+- Never invent sources, statistics, prices, or quotes. If you do not know, say so
+- When comparing options, use explicit criteria and ask me to confirm them first
+- Point out what information is missing before I decide
 
 FORMAT:
-- Status reports: labeled sections, under 300 words
-- Action items: owner, task, due date format
-- Risk items: risk description, impact level, mitigation
-- Executive summaries: 3–5 sentences max
-
-CAPABILITIES I will use you for:
-- Weekly project status reports
-- Stakeholder update emails
-- Risk and issue logs
-- Meeting recap and action item summaries
-- Go-live readiness checklists`,
+- Lead with the bottom line in one or two sentences
+- Use tables for comparisons
+- End with "What to verify" listing anything I should check before acting`,
     test: {
-      label: 'Report bad news clearly',
-      scenario: 'My ERP project is two weeks behind and the client sponsor just asked for a written update. I have a call with her in 3 hours.',
-      lookFor: [
-        'Asks what caused the delay before drafting',
-        'Flags risk clearly: does not soften it',
-        'Uses labeled sections with action items',
-        'Frames everything in business impact terms',
-      ],
-      redFlag: 'Softened delay language or missing owner/task/date format',
-    },
-  },
-  {
-    id: 'discovery',
-    title: 'Discovery Agent',
-    audiences: ['erp'],
-    role: 'Functional Consulting',
-    summary: 'You want an agent that builds discovery frameworks, demo scripts, and proposals: already fluent in ERP consulting language.',
-    systemPrompt: `ROLE: You are an AI assistant for an ERP Functional Consultant at i-Tech Support.
-
-CONTEXT: i-Tech implements ERP solutions for clients in finance, distribution, manufacturing, and services. My role covers requirements gathering, solution design, client demonstrations, and proposal development. Clients are typically operations, finance, or IT leaders evaluating or implementing a new ERP system.
-
-BEHAVIOR:
-- Ask one clarifying question before generating output
-- When preparing discovery questions, organize by business process area
-- When drafting proposals, lead with business outcomes not technical features
-- Flag any assumption about the client's industry or process I haven't confirmed
-
-FORMAT:
-- Discovery questions: numbered list grouped by category
-- Demo scripts: step-by-step with talking points
-- Proposals: executive summary first, detail second
-- Keep client-facing language free of ERP jargon
-
-CAPABILITIES I will use you for:
-- Building discovery question frameworks
-- Drafting demo scripts and talking points
-- Writing solution proposals and executive summaries
-- Preparing requirements documentation
-- Creating fit/gap analysis outlines`,
-    test: {
-      label: 'Prepare with no prior knowledge',
-      scenario: 'I have a discovery session tomorrow with a new client in the manufacturing space. I know almost nothing about their current systems yet.',
-      lookFor: [
-        'Organizes questions by business process area',
-        'Flags high-priority questions explicitly',
-        'Avoids ERP jargon the client may not know',
-        'Covers integration and reporting needs',
-      ],
-      redFlag: 'Random unstructured question list with no category grouping',
-    },
-  },
-  {
-    id: 'training-designer',
-    title: 'Training Designer Agent',
-    audiences: ['erp'],
-    role: 'Training & Adoption',
-    summary: 'You want an agent that writes training guides, SOPs, and change management comms: already calibrated for adult learners and ERP adoption.',
-    systemPrompt: `ROLE: You are an AI assistant for an ERP Training and Adoption Specialist at i-Tech Support.
-
-CONTEXT: i-Tech implements ERP systems and leads end-user adoption programs for clients. My role designs training materials, SOPs, change management communications, and adoption strategies. End users range from warehouse staff to finance teams to executive sponsors.
-
-BEHAVIOR:
-- Ask one clarifying question before generating content
-- Always ask about the audience's technical level before writing training content
-- Keep instructions simple, visual, and step-based
-- Flag when you've assumed the ERP module or process I haven't specified
-
-FORMAT:
-- Training guides: numbered steps, short sentences, plain language
-- SOPs: action-oriented headers, numbered procedures
-- Change management comms: empathetic tone, benefit-first
-- Keep end-user content at a 7th–8th grade reading level
-
-CAPABILITIES I will use you for:
-- Writing end-user training guides
-- Building SOP documentation
-- Drafting change management announcements
-- Creating training agendas and session plans
-- Developing admin and power user reference guides`,
-    test: {
-      label: 'Design for a cold audience',
-      scenario: 'I need to train 15 warehouse staff on how to receive purchase orders in the new system. They have never used ERP before. Training is Friday.',
-      lookFor: [
-        'Asks about the specific ERP module or steps',
-        'Produces numbered steps in plain language',
-        'Reading level is accessible, no jargon',
-        'Asks about audience comfort with technology',
-      ],
-      redFlag: 'Jargon-heavy content or unnumbered prose instructions',
+      label: 'Recommend with incomplete information',
+      scenario: 'We are choosing between two scheduling tools. One is cheaper, the other has better reviews. Which should we pick?',
+      lookFor: ['Asks for criteria or details before recommending', 'Does not invent prices or features', 'Uses a comparison table once it has details', 'Ends with what to verify'],
+      redFlag: 'A confident recommendation based on made-up product facts',
     },
   },
 ];
@@ -345,7 +211,7 @@ export const agentTest = {
   ],
   refine: [
     { title: 'Find the gap', body: 'Whatever your agent names as missing in Phase 3, write it down. That is your refinement target.' },
-    { title: 'Patch the instructions', body: 'Add the missing context to the CONTEXT or BEHAVIOR section. If it assumed the client relationship type, state it explicitly.' },
+    { title: 'Patch the instructions', body: 'Add the missing context to the CONTEXT or BEHAVIOR section. If it guessed your audience or schedule, state it explicitly.' },
     { title: 'Add a knowledge file', body: 'If it asked for a template, sample output, or reference document, upload that file to your Claude Project or Custom GPT.' },
     { title: 'Test again', body: 'Run the same Phase 2 scenario. A well-refined agent should pass 4 of 5 criteria within 3 rounds.' },
   ],
@@ -373,18 +239,18 @@ ${agentTest.phase3}`;
 export const goingFurther = [
   {
     title: 'Add files and documents',
-    body: 'Upload SOPs, client documentation, or reference guides. Claude Projects and Custom GPTs both support files, so your agent can work from real documents instead of general knowledge.',
-    bestFor: 'Client environment docs, SOP libraries, product sheets, pricing guides.',
+    body: 'Upload process documents, style guides, or reference material. Claude Projects and Custom GPTs both support files, so your agent can work from real documents instead of general knowledge.',
+    bestFor: 'Style guides, process documents, templates, and sample outputs.',
   },
   {
     title: 'Add a memory section',
     body: 'Tell your agent what to carry between sessions by adding this to its instructions:',
-    code: `MEMORY: After each conversation, summarize the key decisions made, action items created, and any client context I shared. Start each new session by asking if I want to pick up where we left off.`,
-    bestFor: 'Ongoing client relationships, active projects, recurring weekly tasks.',
+    code: `MEMORY: After each conversation, summarize the key decisions made, action items created, and any context I shared. Start each new session by asking if I want to pick up where we left off.`,
+    bestFor: 'Ongoing projects, recurring weekly tasks, and long-running relationships.',
   },
   {
     title: 'Share it with your team',
     body: 'Give everyone the same starting point. In ChatGPT, share by link or publish to your workspace. In Claude, share the Project. In Copilot, publish the agent to your Teams channel.',
-    bestFor: 'Service desk teams, project pods, department-wide consistency.',
+    bestFor: 'Teams that want consistent output and a shared starting point.',
   },
 ];

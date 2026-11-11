@@ -3,7 +3,6 @@ import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-rou
 import { BookOpen, Bot, Home, Library, Search, Star } from 'lucide-react';
 import logo from '../assets/logo-mark.png';
 import { site } from '../config/site';
-import AudienceSwitcher from './AudienceSwitcher';
 import CommandSearch from './CommandSearch';
 
 const NAV = [
@@ -85,7 +84,9 @@ export default function Shell() {
               <span className="hidden sm:inline">Search</span>
               <kbd className="hidden rounded border border-white/20 px-1.5 font-mono text-[11px] text-white/50 lg:inline">Ctrl K</kbd>
             </button>
-            <AudienceSwitcher />
+            <Link to="/learn" className="hidden h-10 items-center rounded-xl bg-orange px-4 font-heading text-sm font-semibold text-white transition hover:bg-[#d9621a] sm:flex">
+              Start learning
+            </Link>
           </div>
         </div>
       </header>

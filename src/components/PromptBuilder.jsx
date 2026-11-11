@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Wand2 } from 'lucide-react';
 import { fillTemplate, tokenize } from '../lib/prompt';
 import SendBar from './SendBar';
 
 // Form on the left, live preview on the right. Filled values are highlighted in the preview
 // so people can see exactly where their words land before sending.
-export default function PromptBuilder({ id, kind = 'prompt', title, template, fields = [], note }) {
+// `example` is an optional { key: value } map that the "Fill with example" button loads.
+export default function PromptBuilder({ id, kind = 'prompt', title, template, fields = [], note, example }) {
   const [values, setValues] = useState({});
   const tokens = useMemo(() => tokenize(template, fields), [template, fields]);
   const text = useMemo(() => fillTemplate(template, fields, values), [template, fields, values]);
@@ -48,11 +49,18 @@ export default function PromptBuilder({ id, kind = 'prompt', title, template, fi
       <form className="card p-4 sm:p-5" onSubmit={(e) => e.preventDefault()} aria-label="Fill in the prompt">
         <div className="mb-4 flex items-center justify-between gap-3">
           <p className="font-heading text-sm font-semibold text-navy">Fill in the details</p>
-          {filled > 0 && (
-            <button type="button" onClick={() => setValues({})} className="flex items-center gap-1 text-xs font-semibold text-muted hover:text-navy">
-              <RotateCcw size={13} aria-hidden /> Clear
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            {example && (
+              <button type="button" onClick={() => setValues(example)} className="flex items-center gap-1 text-xs font-semibold text-blue hover:underline">
+                <Wand2 size={13} aria-hidden /> Fill with example
+              </button>
+            )}
+            {filled > 0 && (
+              <button type="button" onClick={() => setValues({})} className="flex items-center gap-1 text-xs font-semibold text-muted hover:text-navy">
+                <RotateCcw size={13} aria-hidden /> Clear
+              </button>
+            )}
+          </div>
         </div>
         <div className="space-y-4">
           {fields.map((f) => {

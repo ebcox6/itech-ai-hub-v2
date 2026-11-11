@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Clock, Target } from 'lucide-react';
-import { frameworks, guides, selfCheckPrompt, ultimatePrompt } from '../data/learn';
+import { frameworks, ultimatePrompt } from '../data/learn';
+import { guideFor } from '../lib/guides';
+import { BeforeAfter, Dialogue, NumberedSteps, UseCase, WhyItWorks } from '../components/usecase';
 import { prompts } from '../data/prompts';
 import { GuideCard, PromptCard } from '../components/cards';
 import { BackLink, Callout, PageHeader, SectionTitle } from '../components/ui';
@@ -15,6 +17,7 @@ export default function Framework() {
   const prev = frameworks[i - 1];
   const next = frameworks[i + 1];
   const examples = prompts.filter((p) => p.framework === f.slug);
+  const ex = f.example;
   const numbered = f.slug !== 'power';
 
   return (
@@ -63,6 +66,13 @@ export default function Framework() {
             </section>
           )}
 
+          <UseCase title={ex.title} scenario={ex.scenario}>
+            {ex.before && <BeforeAfter before={ex.before} after={ex.after} />}
+            {ex.dialogue && <Dialogue lines={ex.dialogue} />}
+            {ex.steps && <NumberedSteps steps={ex.steps} />}
+            <WhyItWorks items={ex.why} />
+          </UseCase>
+
           <Callout title={f.insight.title}>{f.insight.body}</Callout>
 
           {f.extra === 'ultimate' && (
@@ -73,13 +83,6 @@ export default function Framework() {
               <PromptBuilder id="ultimate-prompt" title="The Ultimate Prompt" template={ultimatePrompt} note="When it finishes, follow up with the Self-Check prompt in Power Moves." />
             </section>
           )}
-          {f.slug === 'power' && (
-            <section>
-              <SectionTitle title="Self-Check, ready to paste">Use it after any answer you plan to rely on.</SectionTitle>
-              <PromptBuilder id="adv-selfcheck" title="Self-Check Prompt" template={selfCheckPrompt} />
-            </section>
-          )}
-
           {examples.length > 0 && (
             <section>
               <SectionTitle title={f.slug === 'power' ? 'All the power moves' : `Prompts built with ${f.name}`}>
@@ -103,7 +106,7 @@ export default function Framework() {
               </Link>
             ) : (
               <Link to="/agents" className="btn-primary justify-end">
-                You’re ready. Build an agent <ArrowRight size={16} aria-hidden />
+                You’re ready: build an agent <ArrowRight size={16} aria-hidden />
               </Link>
             )}
           </nav>
@@ -113,7 +116,7 @@ export default function Framework() {
           <div className="lg:sticky lg:top-24">
             <p className="eyebrow mb-3">Visual guide</p>
             <div className="max-w-[16rem]">
-              <GuideCard guide={guides[f.guide]} caption="Select to view full size" />
+              <GuideCard guide={guideFor(f.slug, f.name)} caption="Select to view full size" />
             </div>
           </div>
         </aside>

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Heart, Lightbulb } from 'lucide-react';
-import { audiences } from '../config/site';
 import { useStore } from '../lib/store';
 
 export function PageHeader({ eyebrow, title, children, actions, back }) {
@@ -52,13 +51,6 @@ export function Callout({ title, children, icon: Icon = Lightbulb }) {
       </div>
     </div>
   );
-}
-
-export function AudienceChips({ keys }) {
-  if (!keys || keys.length === audiences.length) return <span className="chip bg-surface text-muted">All teams</span>;
-  return keys.map((k) => (
-    <span key={k} className="chip bg-navy-soft text-navy">{audiences.find((a) => a.key === k)?.short}</span>
-  ));
 }
 
 export function FavoriteButton({ id, label, className = '' }) {

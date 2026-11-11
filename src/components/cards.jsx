@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpRight, Bot, Expand, X } from 'lucide-react';
+import { ArrowUpRight, Bot, Download, Expand, X } from 'lucide-react';
 import { frameworks } from '../data/learn';
-import { AudienceChips, FavoriteButton } from './ui';
+import { FavoriteButton } from './ui';
 
 const fwName = Object.fromEntries(frameworks.map((f) => [f.slug, f.name]));
 
@@ -16,16 +16,15 @@ export function PromptCard({ prompt: p }) {
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
           <span className="chip bg-orange-soft text-[#b4541a]">{p.task}</span>
-          {p.framework && <span className="chip bg-blue-soft text-blue">{fwName[p.framework]}</span>}
+          {p.framework && p.group !== 'power' && <span className="chip bg-blue-soft text-blue">{fwName[p.framework]}</span>}
         </div>
         <FavoriteButton id={p.id} label={p.title} className="-mt-1.5 -mr-1.5" />
       </div>
       <h3 className="font-heading text-base leading-snug font-semibold text-navy group-hover:text-blue">{p.title}</h3>
       <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-muted">{p.summary}</p>
-      <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-4 text-xs">
-        <AudienceChips keys={p.audiences} />
-        {p.role !== 'Any role' && <span className="chip bg-surface text-muted">{p.role}</span>}
-      </div>
+      <span className="mt-auto inline-flex items-center gap-1 pt-4 font-heading text-sm font-semibold text-blue">
+        Open prompt <ArrowUpRight size={15} aria-hidden />
+      </span>
     </Link>
   );
 }
@@ -43,10 +42,10 @@ export function AgentCard({ agent: a }) {
         <FavoriteButton id={`agent:${a.id}`} label={a.title} className="-mt-1 -mr-1.5" />
       </div>
       <h3 className="font-heading text-base font-semibold text-navy group-hover:text-blue">{a.title}</h3>
-      <p className="text-xs font-semibold text-orange">{a.role}</p>
+      <p className="text-xs font-semibold text-orange">{a.focus}</p>
       <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{a.summary}</p>
       <div className="mt-auto flex items-center justify-between pt-4">
-        <AudienceChips keys={a.audiences} />
+        <span className="font-heading text-sm font-semibold text-blue">Use this agent</span>
         <ArrowUpRight size={18} className="text-muted transition group-hover:text-blue" aria-hidden />
       </div>
     </Link>
@@ -63,7 +62,7 @@ export function GuideCard({ guide, caption }) {
         onClick={() => setOpen(true)}
         className="group card block w-full overflow-hidden text-left transition hover:shadow-[0_8px_24px_rgba(0,30,98,0.10)]"
       >
-        <div className="relative aspect-[4/5] overflow-hidden bg-navy">
+        <div className="relative aspect-[4/5] overflow-hidden bg-navy-deep">
           <img src={guide.thumb} alt="" loading="lazy" className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-[1.03]" />
           <span className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-navy shadow">
             <Expand size={13} aria-hidden /> View
@@ -74,6 +73,9 @@ export function GuideCard({ guide, caption }) {
           {caption && <p className="mt-0.5 text-xs text-muted">{caption}</p>}
         </div>
       </button>
+      <a href={guide.pdf} download className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-blue hover:underline">
+        <Download size={13} aria-hidden /> Download printable PDF
+      </a>
       <Lightbox open={open} onClose={() => setOpen(false)} guide={guide} />
     </>
   );

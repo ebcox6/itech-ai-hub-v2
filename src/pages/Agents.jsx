@@ -1,11 +1,9 @@
-import { Info } from 'lucide-react';
-import { audiences } from '../config/site';
-import { agents, universalStarter } from '../data/agents';
-import { useStore } from '../lib/store';
+import { agentBuilder, agents } from '../data/agents';
 import PromptBuilder from '../components/PromptBuilder';
 import { AgentCard } from '../components/cards';
 import { AgentTest, GoingFurther, PlatformTabs, RefineSteps, ScoreTable } from '../components/agentParts';
 import { PageHeader, SectionTitle } from '../components/ui';
+import { NumberedSteps, UseCase } from '../components/usecase';
 
 const STEPS = [
   { id: 'start', n: 1, title: 'Write it', body: 'Start from the Universal Starter or a ready-made role agent.' },
@@ -15,10 +13,7 @@ const STEPS = [
 ];
 
 export default function Agents() {
-  const { audience } = useStore();
-  const matching = audience ? agents.filter((a) => a.audiences.includes(audience)) : agents;
-  const shown = matching.length ? matching : agents;
-  const aud = audiences.find((a) => a.key === audience);
+  const ex = agentBuilder.example;
 
   return (
     <>
@@ -40,25 +35,24 @@ export default function Agents() {
       </nav>
 
       <div className="container-page space-y-16 py-10">
+        <UseCase title={ex.title} scenario={ex.scenario}>
+          <NumberedSteps steps={ex.steps} />
+          <p className="text-sm text-muted">Follow the same four steps below. Use <span className="font-semibold text-blue">Fill with example</span> in Step 1 to see Dana’s answers.</p>
+        </UseCase>
+
         <section id="start" className="scroll-mt-32">
           <SectionTitle eyebrow="Step 1" title="Write your agent’s instructions">
-            Fill in two details to make the Universal Starter yours. It sets the rules every good agent follows: ask before guessing, flag assumptions, and keep a consistent format.
+            Five details turn this into instructions for your role, in any industry. It sets the rules every good agent follows: ask before guessing, flag assumptions, and never invent facts.
           </SectionTitle>
-          <PromptBuilder id="universal-starter" kind="agent" title="Universal Starter" template={universalStarter.template} fields={universalStarter.fields} />
+          <PromptBuilder id="agent-builder" kind="agent" title="Agent Builder" template={agentBuilder.template} fields={agentBuilder.fields} example={ex.values} />
 
           <div className="mt-10">
-            <h3 className="text-lg font-semibold">Or start from a role agent</h3>
+            <h3 className="text-lg font-semibold">Or start from a starter agent</h3>
             <p className="mt-1 mb-4 text-sm text-muted">
-              Pre-written instructions for common roles, each with its own test scenario.
+              Ready-made instructions organized by the kind of work, not by industry. Each one comes with its own test.
             </p>
-            {audience && !matching.length && (
-              <div className="mb-4 flex gap-2 rounded-xl bg-blue-soft px-4 py-3 text-sm text-navy">
-                <Info size={18} className="mt-0.5 shrink-0 text-blue" aria-hidden />
-                There are no ready-made {aud.label} agents yet. The Universal Starter above works for any role, or adapt one of these.
-              </div>
-            )}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {shown.map((a) => <AgentCard key={a.id} agent={a} />)}
+              {agents.map((a) => <AgentCard key={a.id} agent={a} />)}
             </div>
           </div>
         </section>
@@ -72,7 +66,7 @@ export default function Agents() {
 
         <section id="test" className="scroll-mt-32">
           <SectionTitle eyebrow="Step 3" title="Test before you trust">
-            Run this inside your new agent. Each role agent page has a scenario written for that role; here you can describe your own.
+            Run this inside your new agent. Each starter agent has a scenario written for it; here you can describe your own.
           </SectionTitle>
           <AgentTest />
           <h3 className="mt-10 mb-4 text-lg font-semibold">Score the results</h3>

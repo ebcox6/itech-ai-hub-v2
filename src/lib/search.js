@@ -9,12 +9,12 @@ const index = [
     text: [f.name, f.tagline, f.intro, ...f.parts.map((p) => p.key)].join(' '),
   })),
   ...prompts.map((p) => ({
-    kind: 'Prompt', id: p.id, title: p.title, sub: p.subtitle || p.summary, to: `/prompts/${p.id}`,
-    text: [p.title, p.subtitle, p.summary, p.role, p.task, p.framework].join(' '),
+    kind: 'Prompt', id: p.id, title: p.title, sub: p.summary, to: `/prompts/${p.id}`,
+    text: [p.title, p.summary, p.task, p.framework].join(' '),
   })),
   ...agents.map((a) => ({
     kind: 'Agent', id: a.id, title: a.title, sub: a.summary, to: `/agents/${a.id}`,
-    text: [a.title, a.role, a.summary].join(' '),
+    text: [a.title, a.focus, a.summary].join(' '),
   })),
 ].map((r) => ({ ...r, hay: r.text.toLowerCase(), titleLc: r.title.toLowerCase() }));
 

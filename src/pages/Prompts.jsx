@@ -1,125 +1,80 @@
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { SearchX, X } from 'lucide-react';
-import { audiences } from '../config/site';
-import { prompts } from '../data/prompts';
-import { frameworks } from '../data/learn';
-import { useStore } from '../lib/store';
+import { Link, useSearchParams } from 'react-router-dom';
+import { SearchX } from 'lucide-react';
+import { groups, prompts } from '../data/prompts';
 import { PromptCard } from '../components/cards';
-import { EmptyState, PageHeader } from '../components/ui';
+import { EmptyState, PageHeader, SectionTitle } from '../components/ui';
+import { NumberedSteps, UseCase } from '../components/usecase';
 
-const TASKS = [...new Set(prompts.map((p) => p.task))].sort();
-
-function Chip({ on, onClick, children }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap transition ${
-        on ? 'border-navy bg-navy text-white' : 'border-line bg-white text-navy hover:border-navy/40'
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
+const WALKTHROUGH = [
+  { title: 'Pick a prompt', body: 'Maya needs to chase a vendor who missed a deadline, so she opens Professional Email.' },
+  { title: 'Fill in four details', body: 'The situation, who it is going to, what she needs, and the tone. "Fill with example" shows what good answers look like.' },
+  { title: 'Send it to her AI tool', body: 'One click opens ChatGPT or Claude with the prompt ready, or copies it for Gemini and Copilot.' },
+  { title: 'Check before sending', body: 'She follows up with the Self-Check prompt, which catches a date she forgot to confirm.' },
+];
 
 export default function Prompts() {
-  const { audience, setAudience } = useStore();
   const [params, setParams] = useSearchParams();
   const q = params.get('q') || '';
-  const task = params.get('task') || '';
-  const fw = params.get('framework') || '';
-
-  const update = (key, val) => {
-    const next = new URLSearchParams(params);
-    if (val) next.set(key, val); else next.delete(key);
-    setParams(next, { replace: true });
-  };
 
   const list = useMemo(() => {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return prompts;
     return prompts.filter((p) => {
-      if (audience && !p.audiences.includes(audience)) return false;
-      if (task && p.task !== task) return false;
-      if (fw && p.framework !== fw) return false;
-      if (terms.length) {
-        const hay = [p.title, p.subtitle, p.summary, p.role, p.task].join(' ').toLowerCase();
-        if (!terms.every((t) => hay.includes(t))) return false;
-      }
-      return true;
+      const hay = [p.title, p.summary, p.task, p.framework].join(' ').toLowerCase();
+      return terms.every((t) => hay.includes(t));
     });
-  }, [audience, task, fw, q]);
+  }, [q]);
 
-  const filtersOn = Boolean(audience || task || fw || q);
-  const clearAll = () => { setAudience(null); setParams({}, { replace: true }); };
+  const setQ = (v) => setParams(v ? { q: v } : {}, { replace: true });
 
   return (
     <>
-      <PageHeader eyebrow="Prompt library" title="Find a prompt, fill it in, send it">
-        Every prompt opens in a builder: type your details, preview the result, and send it to ChatGPT, Claude, Gemini, or Copilot.
+      <PageHeader eyebrow="Prompts" title="Ready-made prompts for everyday work">
+        A short, focused set that works in any role or industry. Open one, fill in your details, and send it to ChatGPT, Claude, Gemini, or Copilot.
       </PageHeader>
 
-      <div className="container-page py-8">
-        <div className="card mb-6 space-y-4 p-4 sm:p-5">
+      <div className="container-page space-y-12 py-8">
+        <UseCase title="From blank page to sent email in two minutes" scenario="Maya, a coordinator, needs to follow up with a vendor who missed a deadline.">
+          <NumberedSteps steps={WALKTHROUGH} />
+          <Link to="/prompts/professional-email" className="btn-navy">Try Professional Email</Link>
+        </UseCase>
+
+        <div>
           <input
             type="search"
             value={q}
-            onChange={(e) => update('q', e.target.value)}
-            placeholder="Filter by keyword, for example “status” or “client email”"
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Filter prompts, for example “email” or “meeting”"
             aria-label="Filter prompts by keyword"
-            className="w-full rounded-xl border border-line bg-surface/50 px-4 py-3 text-sm outline-none focus:border-blue focus:bg-white focus:ring-3 focus:ring-blue/15"
+            className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm outline-none focus:border-blue focus:ring-3 focus:ring-blue/15"
           />
-          <FilterRow label="Team">
-            <Chip on={!audience} onClick={() => setAudience(null)}>All teams</Chip>
-            {audiences.map((a) => (
-              <Chip key={a.key} on={audience === a.key} onClick={() => setAudience(audience === a.key ? null : a.key)}>{a.label}</Chip>
-            ))}
-          </FilterRow>
-          <FilterRow label="Task">
-            <Chip on={!task} onClick={() => update('task', '')}>Any task</Chip>
-            {TASKS.map((t) => <Chip key={t} on={task === t} onClick={() => update('task', task === t ? '' : t)}>{t}</Chip>)}
-          </FilterRow>
-          <FilterRow label="Framework">
-            <Chip on={!fw} onClick={() => update('framework', '')}>Any</Chip>
-            {frameworks.map((f) => <Chip key={f.slug} on={fw === f.slug} onClick={() => update('framework', fw === f.slug ? '' : f.slug)}>{f.name}</Chip>)}
-          </FilterRow>
-        </div>
-
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <p className="text-sm text-muted" aria-live="polite">
-            Showing <span className="font-semibold text-ink">{list.length}</span> of {prompts.length} prompts
-          </p>
-          {filtersOn && (
-            <button type="button" onClick={clearAll} className="inline-flex items-center gap-1 text-sm font-semibold text-blue hover:underline">
-              <X size={14} aria-hidden /> Clear filters
-            </button>
+          {q && (
+            <p className="mt-2 text-sm text-muted" aria-live="polite">
+              {list.length} of {prompts.length} prompts match
+            </p>
           )}
         </div>
 
-        {list.length ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {list.map((p) => <PromptCard key={p.id} prompt={p} />)}
-          </div>
-        ) : (
-          <EmptyState icon={SearchX} title="No prompts match those filters" action={<button type="button" onClick={clearAll} className="btn-navy">Clear filters</button>}>
-            Try a different keyword, or widen the team or task.
+        {list.length === 0 && (
+          <EmptyState icon={SearchX} title="No prompts match" action={<button type="button" onClick={() => setQ('')} className="btn-navy">Clear filter</button>}>
+            Try another word, or start from a framework template.
           </EmptyState>
         )}
+
+        {groups.map((g) => {
+          const items = list.filter((p) => p.group === g.key);
+          if (!items.length) return null;
+          return (
+            <section key={g.key} id={g.key} className="scroll-mt-24">
+              <SectionTitle title={g.title}>{g.blurb}</SectionTitle>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {items.map((p) => <PromptCard key={p.id} prompt={p} />)}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </>
-  );
-}
-
-// Chips scroll sideways on small screens instead of wrapping into a tall block.
-function FilterRow({ label, children }) {
-  return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-      <span className="w-20 shrink-0 text-xs font-semibold tracking-wide text-muted uppercase">{label}</span>
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
-        {children}
-      </div>
-    </div>
   );
 }

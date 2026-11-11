@@ -15,6 +15,8 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Old v1 paths redirect to their new homes so existing links keep working.
 const legacy = {
+  'agents/ticket-triage': '/agents', 'agents/qbr-prep': '/agents', 'agents/client-comms': '/agents',
+  'agents/project-status': '/agents', 'agents/discovery': '/agents', 'agents/training-designer': '/agents',
   welcome: '/', frameworks: '/learn', synapse: '/learn/synapse', craft: '/learn/craft',
   socratic: '/learn/socratic', anatomy: '/learn/anatomy', advanced: '/learn/power',
   templates: '/prompts', library: '/prompts', resources: '/learn#guides', favorites: '/my-kit', history: '/my-kit',
